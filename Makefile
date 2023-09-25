@@ -73,22 +73,27 @@ endef
 ##@ Test
 
 test: ## Run go test ./...
-	go test ./...
+	go test ./... -count=1
 
 ##@ Benchmark
 
 benchmark: ## Run benchmark
 	go test -test.bench=".*" -benchmem ./test/benchmark/...
 
-##@ Build
+##@ Build(with cgo sqlite)
 
 build: ## go build, EXT_BUILD_TAGS=include_core would only build core package
 	CGO_ENABLED=1 GOOS=${GOOS} GOARCH=${GOARCH} go build -tags ${EXT_BUILD_TAGS} -mod=vendor -a ${extra_flags} -o loggie cmd/loggie/main.go
 
-##@ Build(without sqlite)
+##@ Build(with badget)
 
-build-in-badger: ## go build without sqlite, EXT_BUILD_TAGS=include_core would only build core package
+build-in-badger: ## go build with badget, EXT_BUILD_TAGS=include_core would only build core package
 	GOOS=${GOOS} GOARCH=${GOARCH} go build -tags driver_badger,${EXT_BUILD_TAGS} -mod=vendor -a -ldflags '-X github.com/loggie-io/loggie/pkg/core/global._VERSION_=${TAG} -X github.com/loggie-io/loggie/pkg/util/persistence._DRIVER_=badger -s -w' -o loggie cmd/loggie/main.go
+
+##@ Build(with pure go sqlite)
+
+build-go-sqlite: ## go build with pure go sqlite, EXT_BUILD_TAGS=include_core would only build core package
+	GOOS=${GOOS} GOARCH=${GOARCH} go build -tags driver_go_sqlite,${EXT_BUILD_TAGS} -mod=vendor -a ${extra_flags} -o loggie cmd/loggie/main.go
 
 ##@ Images
 

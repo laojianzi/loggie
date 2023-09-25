@@ -21,18 +21,17 @@ package driver
 import (
 	"database/sql"
 	"fmt"
-	"github.com/loggie-io/loggie/pkg/core/log"
-	"github.com/loggie-io/loggie/pkg/util/persistence/reg"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/loggie-io/loggie/pkg/core/log"
+	"github.com/loggie-io/loggie/pkg/util/persistence/reg"
+	"github.com/pkg/errors"
 )
 
 const (
-	driver      = "sqlite3"
 	createTable = `
 	CREATE TABLE IF NOT EXISTS registry (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,7 +63,7 @@ type Engine struct {
 }
 
 func Init(file string) *Engine {
-	log.Info("using database engine: sqlite3")
+	log.Info(usingEngineMessage)
 	dbFile := createDbFile(file)
 	db, err := sql.Open(driver, dbFile)
 	if err != nil {
